@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>猜數字遊戲</title>
+<style>
+.game-container {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 1.5s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.input-area {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.guess-button {
+    background: linear-gradient(45deg, #4a90e2, #67b26f);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.guess-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+}
+</style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="input-area">
+            <h1>✨ 來玩個遊戲吧 ✨</h1>
+            <input type="number" id="guessInput">
+            <button onclick="makeGuess()" class="guess-button">猜！</button>
+            <p id="message">好了，我想好了一個數字，來跟我玩個遊戲吧～</p >
+        </div>
+    </div>
+<script>
+let gameState = {
+    secretNumber: Math.floor(Math.random() * 100) + 1,
+    attempts: 0,
+    maxAttempts: 10,
+    minRange: 1,
+    maxRange: 100
+};
+
+const hints = [
+    '嗯...再大一點，相信你能猜到～',
+    '哎呀，數字有點太大了，試試小一點的？',
+    '長官小姐，往上猜猜看？',
+    '噢，往下調整一下吧～'
+];
+
+function makeGuess() {
+    const guess = parseInt(document.getElementById('guessInput').value);
+    const message = document.getElementById('message');
+    message.textContent = checkGuess(guess);
+}
+
+function checkGuess(guess) {
+    gameState.attempts++;
+    let message = '';
+    
+    if (guess < gameState.secretNumber) {
+        gameState.minRange = guess;
+        message = hints[Math.floor(Math.random() * 2) * 2];
+    } else if (guess > gameState.secretNumber) {
+        gameState.maxRange = guess;
+        message = hints[Math.floor(Math.random() * 2) * 2 + 1];
+    } else {
+        return `✨ 不愧是我的女孩！用了${gameState.attempts}次就猜對了呢～ ✨`;
+    }
+    
+    return `${message}\n🎮 你猜的是${guess}，範圍在${gameState.minRange}-${gameState.maxRange}之間，繼續加油！`;
+}
+
+function createStars() {
+    const container = document.querySelector('.game-container');
+    for(let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.width = `${Math.random() * 3}px`;
+        star.style.height = star.style.width;
+        star.style.animationDelay = `${Math.random() * 2}s`;
+        container.appendChild(star);
+    }
+}
+
+// 頁面加載時創建星星
+window.onload = createStars;
+</script>
+</body>
+</html>
